@@ -6,13 +6,24 @@ using System.Threading.Tasks;
 
 namespace Database.Structure
 {
-    [Serializable]
     class Column
     {
-        string ColumnName;
+        public string ColumnName;
+        public Table Table;
 
-        public Column(string columnName) {
+        public Column()
+        {
+
+        }
+
+        public Column(string columnName)
+        {
             ColumnName = columnName;
+        }
+
+        public void KillFreeman()
+        {
+            Console.WriteLine("fREEMAN DEAD");
         }
     }
 }

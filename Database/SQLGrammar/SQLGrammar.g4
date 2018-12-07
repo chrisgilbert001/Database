@@ -1,37 +1,47 @@
 grammar SQLGrammar;
 
 /*
- * Parser Rules
- */
+* Parser Rules
+*/
 
-dmlstatements				: select_statement; 
+dmlstatements	: select_statement;
 
-select_statement			: SELECT column_list;
-							  /*FROM table_list;*/
+select_statement	: SELECT column_list
+                      FROM table_name
+;
 
-column_list					: column_element (',' column_element)*
-							;
+column_list	: column_element (',' column_element)*
+;
 
-column_element				: /*asterisk
-							| */column_name
-							;
+column_element	: asterisk | column_name
+;
 
-column_name					: A
-							;
+column_name	: (table_name '.')? column=id
+;
 
-/*asterisk					: '*'
-							| table_name '.' asterisk
-							;*/
+asterisk	: '*' | table_name '.' asterisk
+;
 
-compileUnit					: dmlstatements EOF
-							;
+table_name	: table=id
+;
+
+compileUnit	: dmlstatements EOF
+;
+
+id	: ID
+;
+
 
 /*
- * Lexer Rules
- */
+* Lexer Rules
+*/
 
-SELECT : S E L E C T; 
-FROM   : F R O M;
+SELECT : S E L E C T;
+FROM : F R O M;
+
+ID : (LETTER | DIGIT) (LETTER | DIGIT)*;
+
+LETTER : A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;
 
 //Numbers
 fragment DIGIT : [0-9];
@@ -64,6 +74,5 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 
-WS
-	:	' ' -> channel(HIDDEN)
-	;
+WS :	' ' -> channel(HIDDEN)
+;
