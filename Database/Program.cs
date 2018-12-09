@@ -28,24 +28,19 @@ namespace Database
                 SQLGrammarParser.CompileUnitContext context = sqlParser.compileUnit();
                 SQLVisitor visitor = new SQLVisitor();
                 visitor.Visit(context);
-             
-                Column name = new Column ("name");
-                Column age = new Column("age");
 
-                //person.Columns.Add(name); 
-                TableList tables = new TableList(); 
-                tables.Add(new Table("Person")); 
-                tables[0].Columns.Add(name);
-                tables[0].Columns.Add(age);
+                TableList tableList = new TableList(); 
+                tableList.Tables.Add(new Table("Person"));
+                tableList.Tables[0].AddColumn(new Column("Name"));
+                tableList.Tables[0].AddColumn(new Column("Age"));
+                tableList.Tables[0].AddRow(new Row(new List<string>() {"Chris", "21" }));
+                tableList.Tables[0].AddRow(new Row(new List<string>() { "Lewys", "22" }));
+                tableList.Tables[0].AddRow(new Row(new List<string>() { "Talha", "22" }));
 
-                Column column1 = new Column();
 
-                column1.ColumnName = "column1";
-                column1.Table = tables[0];
-
-                column1.KillFreeman();
-
-                Console.WriteLine(tables.FindTable("House"));
+                tableList.Tables.Add(new Table("Car"));
+                tableList.Tables[1].AddColumn(new Column("Brand Name"));
+                tableList.Tables[1].AddRow(new Row(new List<string>() { "Mercedes"}));
             }
             catch (Exception ex)
             {

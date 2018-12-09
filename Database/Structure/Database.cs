@@ -8,8 +8,8 @@ namespace Database.Structure
 {
     class Database
     {
-        public string Name;
-        public TableList Tables;
+        public string Name { get; set; }
+        public TableList Tables { get; set; }
 
         public Database(string name)
         {

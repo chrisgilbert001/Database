@@ -8,22 +8,19 @@ namespace Database.Structure
 {
     class Column
     {
-        public string ColumnName;
-        public Table Table;
+        public string Name { get; set; }
+        public Table Table { get; set; }
 
-        public Column()
+        public Column(string name)
         {
-
+            Name = columnName;
         }
 
-        public Column(string columnName)
+        public Column(Table table, string name)
         {
-            ColumnName = columnName;
-        }
-
-        public void KillFreeman()
-        {
-            Console.WriteLine("fREEMAN DEAD");
+            this.Table = table;
+            this.Name = name;
+            table.AddColumn(this);
         }
     }
 }

@@ -5,18 +5,36 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Database.Structure
-{
-    class TableList : List<Table>
+{   /// <summary>
+    /// Contains a collection of Tables
+    /// </summary>
+    class TableList
     {
-        public List<Table> tables;
+        private List<Table> _tables = new List<Table>();
+        private Database _database;
+
+        public List<Table> Tables
+        {
+            get { return _tables; } 
+        }
+
+        public Database Database
+        {
+            get { return _database; }
+        }
 
         public TableList()
         {
         }
 
+        /// <summary>
+        /// Find a table in a List of tables from its name. 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public int FindTable(string tableName)
         {
-            return FindIndex(x => x.TableName.Equals(tableName));
+            return this.Tables.FindIndex(x => x.TableName.Equals(tableName));
         }
     }
 }

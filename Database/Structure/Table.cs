@@ -7,17 +7,27 @@ using System.Threading.Tasks;
 namespace Database.Structure
 {
     /// <summary>
-    /// Table Class
+    /// Table Class bla bla bla
     /// </summary>
     class Table
     {
+        private List<Column> _columns = new List<Column>();
+        private List<Row> _rows = new List<Row>();
         public string TableName { get; set; }
-        public List<Column> Columns = new List<Column>();
-        public List<Row> Rows { get; set; }
+
+        public List<Column> Columns
+        {
+             get { return _columns; }
+        }
+
+        public List<Row> Rows
+        {
+            get { return _rows; }
+        }
 
         public Table(string name)
         {
-            TableName = name;
+            this.TableName = name;
         }
 
         /// <summary>
