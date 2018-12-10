@@ -13,7 +13,7 @@ namespace Database.Structure
 
         public Column(string name)
         {
-            Name = columnName;
+            Name = name;
         }
 
         public Column(Table table, string name)

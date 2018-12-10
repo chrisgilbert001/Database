@@ -60,6 +60,7 @@
     <Compile Include="obj\Debug\SQLGrammarVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLGrammar\SelectVisitor.cs" />
     <Compile Include="SQLGrammar\SQLVisitor.cs" />
     <Compile Include="SQLStatements\DML\Select.cs" />
     <Compile Include="Structure\Column.cs" />

@@ -9,6 +9,7 @@ using Database.Parsing;
 using Antlr4.Runtime;
 using Database.SQLGrammar;
 using Antlr.Runtime.Tree;
+using Database.SQLStatements.DML;
 
 namespace Database
 {
@@ -18,7 +19,7 @@ namespace Database
         {
             try
             {
-                string text = "SELECT table1.column FROM table1";
+                string text = "SELECT table1.column, table1.column2 FROM table1";
 
                 AntlrInputStream inputStream = new AntlrInputStream(text.ToString());
                 SQLGrammarLexer sqlLexer = new SQLGrammarLexer(inputStream);
@@ -27,7 +28,10 @@ namespace Database
 
                 SQLGrammarParser.CompileUnitContext context = sqlParser.compileUnit();
                 SQLVisitor visitor = new SQLVisitor();
-                visitor.Visit(context);
+                
+                Select hi = (Select)visitor.Visit(context);
+
+                Console.WriteLine(hi.FromTable);
 
                 TableList tableList = new TableList(); 
                 tableList.Tables.Add(new Table("Person"));
