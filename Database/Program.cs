@@ -19,6 +19,20 @@ namespace Database
         {
             try
             {
+                // Create some tables and fill them with test data.
+                TableList tableList = new TableList(); 
+                tableList.Tables.Add(new Table("Person"));
+                tableList.Tables[0].AddColumn(new Column("Name"));
+                tableList.Tables[0].AddColumn(new Column("Age"));
+                tableList.Tables[0].AddRow(new Row(new List<string>() {"Chris", "21" }));
+                tableList.Tables[0].AddRow(new Row(new List<string>() { "Lewys", "22" }));
+                tableList.Tables[0].AddRow(new Row(new List<string>() { "Talha", "22" }));
+
+                tableList.Tables.Add(new Table("Car"));
+                tableList.Tables[1].AddColumn(new Column("Brand Name"));
+                tableList.Tables[1].AddRow(new Row(new List<string>() { "Mercedes"}));
+
+                // Parse and execute a test query
                 string text = "SELECT table1.column, table1.column2 FROM table1";
 
                 AntlrInputStream inputStream = new AntlrInputStream(text.ToString());
@@ -28,23 +42,14 @@ namespace Database
 
                 SQLGrammarParser.CompileUnitContext context = sqlParser.compileUnit();
                 SQLVisitor visitor = new SQLVisitor();
-                
+
                 Select hi = (Select)visitor.Visit(context);
 
-                Console.WriteLine(hi.FromTable);
+                hi.Execute();
 
-                TableList tableList = new TableList(); 
-                tableList.Tables.Add(new Table("Person"));
-                tableList.Tables[0].AddColumn(new Column("Name"));
-                tableList.Tables[0].AddColumn(new Column("Age"));
-                tableList.Tables[0].AddRow(new Row(new List<string>() {"Chris", "21" }));
-                tableList.Tables[0].AddRow(new Row(new List<string>() { "Lewys", "22" }));
-                tableList.Tables[0].AddRow(new Row(new List<string>() { "Talha", "22" }));
-
-
-                tableList.Tables.Add(new Table("Car"));
-                tableList.Tables[1].AddColumn(new Column("Brand Name"));
-                tableList.Tables[1].AddRow(new Row(new List<string>() { "Mercedes"}));
+                tableList.FindTable(hi.FromTable);
+                
+            
             }
             catch (Exception ex)
             {

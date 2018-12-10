@@ -15,7 +15,7 @@ namespace Database.Structure
 
         public List<Table> Tables
         {
-            get { return _tables; } 
+            get { return _tables; }
         }
 
         public Database Database
@@ -35,6 +35,12 @@ namespace Database.Structure
         public int FindTable(string tableName)
         {
             return this.Tables.FindIndex(x => x.TableName.Equals(tableName));
+        }
+
+        public static Table FindTable(TableList tableList, string tableName)
+        {
+            tableList.Tables.Find(x => x.TableName.Equals(tableName));
+            return null;
         }
     }
 }

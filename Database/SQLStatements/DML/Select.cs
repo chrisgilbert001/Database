@@ -14,12 +14,22 @@ namespace Database.SQLStatements.DML
 
         public List<string> FromColumns
         {
-            get { return FromColumns; }
+            get { return _fromColumns; }
         }
 
         public Select()
         {
 
+        }
+
+        /// <summary>
+        /// Execute the select statement that has been built.
+        /// </summary>
+        /// <returns></returns>
+        public List<Row> Execute()
+        {
+            
+            return null;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Database.SQLGrammar
 {
     class SelectVisitor : SQLGrammarBaseVisitor<Select>
     {
-        public Select select;
+        public Select select = new Select();
 
         public override Select VisitSelect_statement([NotNull] SQLGrammarParser.Select_statementContext context)
         {
@@ -23,13 +23,14 @@ namespace Database.SQLGrammar
 
         public override Select VisitColumn_name([NotNull] SQLGrammarParser.Column_nameContext context)
         {
-            Console.WriteLine("Column Name " + context.GetText());
-            return base.VisitColumn_name(context);
+            VisitChildren(context);
+
+            select.FromColumns.Add(context.column.GetText());
+            return select;
         }
 
         public override Select VisitColumn_element([NotNull] SQLGrammarParser.Column_elementContext context)
         {
-            Console.WriteLine("Column Element " + context.GetText());
             return base.VisitColumn_element(context);
         }
 
@@ -38,7 +39,7 @@ namespace Database.SQLGrammar
             VisitChildren(context);
 
             // If its parent is a select statement then this is the FROM table.
-            select = new Select();
+            // select = new Select();
             if (context.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
                 select.FromTable = context.table.GetText();
@@ -49,14 +50,7 @@ namespace Database.SQLGrammar
 
         public override Select VisitColumn_list([NotNull] SQLGrammarParser.Column_listContext context)
         {
-            Console.WriteLine("Column List " + context.GetText());
             return base.VisitColumn_list(context);
-        }
-
-        public override Select VisitTerminal([NotNull] ITerminalNode node)
-        {
-            Console.WriteLine("banana");
-            return base.VisitTerminal(node);
         }
     }
 }
