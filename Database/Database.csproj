@@ -60,14 +60,17 @@
     <Compile Include="obj\Debug\SQLGrammarVisitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLGrammar\QueryVisitor.cs" />
     <Compile Include="SQLGrammar\SelectVisitor.cs" />
     <Compile Include="SQLGrammar\SQLVisitor.cs" />
+    <Compile Include="SQLStatements\DML\Join.cs" />
     <Compile Include="SQLStatements\DML\Select.cs" />
+    <Compile Include="SQLStatements\DML\Query.cs" />
+    <Compile Include="SQLStatements\Statement.cs" />
     <Compile Include="Structure\Column.cs" />
-    <Compile Include="Structure\Database.cs" />
+    <Compile Include="Structure\Db.cs" />
     <Compile Include="Structure\Row.cs" />
     <Compile Include="Structure\Table.cs" />
-    <Compile Include="Structure\TableList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -79,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="QueryEngine\" />
+    <Folder Include="SQLStatements\DDL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

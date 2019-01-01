@@ -9,18 +9,12 @@ namespace Database.Structure
     class Column
     {
         public string Name { get; set; }
-        public Table Table { get; set; }
+        public int ColumnID { get; set; }
 
-        public Column(string name)
+        public Column(string name, int columnID)
         {
             Name = name;
-        }
-
-        public Column(Table table, string name)
-        {
-            this.Table = table;
-            this.Name = name;
-            table.AddColumn(this);
+            ColumnID = columnID;
         }
     }
 }

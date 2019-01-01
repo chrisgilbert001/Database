@@ -11,14 +11,9 @@ namespace Database.Structure
     /// </summary>
     class Table
     {
-        private List<Column> _columns = new List<Column>();
         private List<Row> _rows = new List<Row>();
         public string TableName { get; set; }
-
-        public List<Column> Columns
-        {
-             get { return _columns; }
-        }
+        public Dictionary<string, Column> Columns = new Dictionary<string, Column>();
 
         public List<Row> Rows
         {
@@ -30,24 +25,49 @@ namespace Database.Structure
             this.TableName = name;
         }
 
-        /// <summary>
-        /// Adds a 'Row' to the table.
-        /// </summary>
-        /// <param name="row"></param>
         public void AddRow(Row row)
         {
             this.Rows.Add(row);
-            row.Table = this;
         }
 
-        /// <summary>
-        /// Adds a 'Column' to the table.
-        /// </summary>
-        /// <param name="column"></param>
-        public void AddColumn(Column column)
+        public Row AddAndCreateRow(List<string> entries)
         {
-            this.Columns.Add(column);
-            column.Table = this;
+            if (entries.Count == Columns.Count)
+            {
+                Row row = new Row(entries);
+                Rows.Add(row);
+                return row;
+            }
+            else
+            {
+                //TODO: Error when the row size doesn't match the table size.
+                throw new NotImplementedException();
+            }
+        }
+
+        public void AddAndCreateColumn(string columnName)
+        {           
+            Column newColumn = new Column(columnName, Columns.Count());
+            this.Columns.Add(columnName, newColumn);
+        }
+
+        public Column GetColumn(string columnName)
+        {
+            Column column;
+            if (Columns.TryGetValue(columnName, out column))
+            {
+                return column;
+            }
+            else
+            {
+                // TODO: Actually create an error class and error properly.
+                throw new NotImplementedException();
+            }
+        }
+
+        public void CheckRowLength()
+        {
+
         }
     }
 }

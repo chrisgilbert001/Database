@@ -25,7 +25,17 @@ namespace Database.SQLGrammar
         {
             VisitChildren(context);
 
-            select.FromColumns.Add(context.column.GetText());
+            // If its parent is a select statement then add the columns we are getting from the FROM table.
+            if (context.parent.parent.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
+            {
+                select.FromColumns.Add(context.column.GetText());
+            }
+            // If its parent is a Join then get the columns we are joining.
+            else if (context.parent.GetType() == typeof(SQLGrammarParser.JoinContext))
+            {
+                select.Joins[0].JoinColumns.Add(context.column.GetText());
+            }
+            
             return select;
         }
 
@@ -39,18 +49,29 @@ namespace Database.SQLGrammar
             VisitChildren(context);
 
             // If its parent is a select statement then this is the FROM table.
-            // select = new Select();
             if (context.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
                 select.FromTable = context.table.GetText();
+            }           
+            // If its parent is a Join then get the join tables and columns
+            else if (context.parent.GetType() == typeof(SQLGrammarParser.JoinContext))
+            {
+                Join join = new Join();
+                join.JoinTable = context.table.GetText();
+                select.Joins.Add(join);
             }
-          
+
             return select;
         }  
 
         public override Select VisitColumn_list([NotNull] SQLGrammarParser.Column_listContext context)
         {
             return base.VisitColumn_list(context);
+        }
+
+        public override Select VisitJoin([NotNull] SQLGrammarParser.JoinContext context)
+        {    
+            return base.VisitJoin(context);
         }
     }
 }

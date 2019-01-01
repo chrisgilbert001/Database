@@ -12,7 +12,6 @@ namespace Database.Structure
     class Row : List<string>
     {
         private List<string> _entries = new List<string>();
-        public Table Table { get; set; }
 
         public List<string> Entries
         {
@@ -31,7 +30,6 @@ namespace Database.Structure
 
         public Row(Table table, List<string> entries)
         {
-            this.Table = table;
             this._entries = entries;
             table.AddRow(this);
         }

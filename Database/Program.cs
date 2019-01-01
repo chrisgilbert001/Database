@@ -10,6 +10,8 @@ using Antlr4.Runtime;
 using Database.SQLGrammar;
 using Antlr.Runtime.Tree;
 using Database.SQLStatements.DML;
+using Database.SQLStatements;
+using System.Diagnostics;
 
 namespace Database
 {
@@ -20,41 +22,55 @@ namespace Database
             try
             {
                 // Create some tables and fill them with test data.
-                TableList tableList = new TableList(); 
-                tableList.Tables.Add(new Table("Person"));
-                tableList.Tables[0].AddColumn(new Column("Name"));
-                tableList.Tables[0].AddColumn(new Column("Age"));
-                tableList.Tables[0].AddRow(new Row(new List<string>() {"Chris", "21" }));
-                tableList.Tables[0].AddRow(new Row(new List<string>() { "Lewys", "22" }));
-                tableList.Tables[0].AddRow(new Row(new List<string>() { "Talha", "22" }));
+                Db gilbertDb = new Db();
+                Table person = gilbertDb.AddAndCreateTable("Person"); 
+                person.AddAndCreateColumn("Name");
+                person.AddAndCreateColumn("Age");
+                for (int i = 0; i < 2; i++)
+                {
+                    person.AddAndCreateRow(new List<string>() { "Chris", "33" });
+                }
+                person.AddAndCreateRow(new List<string>() { "John", "44" });
 
-                tableList.Tables.Add(new Table("Car"));
-                tableList.Tables[1].AddColumn(new Column("Brand Name"));
-                tableList.Tables[1].AddRow(new Row(new List<string>() { "Mercedes"}));
 
                 // Parse and execute a test query
-                string text = "SELECT table1.column, table1.column2 FROM table1";
-
-                AntlrInputStream inputStream = new AntlrInputStream(text.ToString());
+                string query = "SELECT Name FROM Person INNER JOIN Person ON Name = Name";
+                
+                #region AntlrStuff
+                AntlrInputStream inputStream = new AntlrInputStream(query.ToString());
                 SQLGrammarLexer sqlLexer = new SQLGrammarLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(sqlLexer);
                 SQLGrammarParser sqlParser = new SQLGrammarParser(commonTokenStream);
-
                 SQLGrammarParser.CompileUnitContext context = sqlParser.compileUnit();
                 SQLVisitor visitor = new SQLVisitor();
+                #endregion
 
-                Select hi = (Select)visitor.Visit(context);
+                //Statement statement = visitor.Visit(context);
+                //statement.Execute(gilbertDb);
 
-                hi.Execute();
-
-                tableList.FindTable(hi.FromTable);
-                
-            
+                // Start benchmarking.
+                Action action = () => visitor.Visit(context).Execute(gilbertDb);
+                Benchmark(action, 1000);
+               
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex);
             }
+        }
+
+        // Benchmark method to test method speeds.
+        private static void Benchmark(Action act, int iterations)
+        {
+            GC.Collect();
+            act.Invoke(); // run once outside of loop to avoid initialization costs
+            Stopwatch sw = Stopwatch.StartNew();
+            for (int i = 0; i < iterations; i++)
+            {
+                act.Invoke();
+            }
+            sw.Stop();
+            Console.WriteLine((sw.ElapsedMilliseconds / iterations).ToString());
         }
     }  
 }
