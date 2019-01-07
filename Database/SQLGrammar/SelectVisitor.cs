@@ -8,6 +8,7 @@ using Database.SQLStatements;
 using Database.SQLStatements.DML;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
+using Database.Structure;
 
 namespace Database.SQLGrammar
 {
@@ -24,54 +25,42 @@ namespace Database.SQLGrammar
         public override Select VisitColumn_name([NotNull] SQLGrammarParser.Column_nameContext context)
         {
             VisitChildren(context);
-
-            // If its parent is a select statement then add the columns we are getting from the FROM table.
+            // TODO: Maybe improve here.
+            // If its great grand parent is a select statement then add the columns we are getting from the FROM table.
             if (context.parent.parent.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
-                select.FromColumns.Add(context.column.GetText());
-            }
-            // If its parent is a Join then get the columns we are joining.
-            else if (context.parent.GetType() == typeof(SQLGrammarParser.JoinContext))
-            {
-                select.Joins[0].JoinColumns.Add(context.column.GetText());
+                select.ColumnList.Add(new Tuple <string, string>(context.table_name().table.GetText(), context.column.GetText()));
             }
             
             return select;
         }
 
-        public override Select VisitColumn_element([NotNull] SQLGrammarParser.Column_elementContext context)
-        {
-            return base.VisitColumn_element(context);
-        }
-
         public override Select VisitTable_name([NotNull] SQLGrammarParser.Table_nameContext context)
         {
             VisitChildren(context);
-
+            // TODO: Maybe improve here.
             // If its parent is a select statement then this is the FROM table.
             if (context.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
-                select.FromTable = context.table.GetText();
-            }           
-            // If its parent is a Join then get the join tables and columns
-            else if (context.parent.GetType() == typeof(SQLGrammarParser.JoinContext))
-            {
-                Join join = new Join();
-                join.JoinTable = context.table.GetText();
-                select.Joins.Add(join);
+                select.FromTableName = context.table.GetText();
             }
 
             return select;
-        }  
-
-        public override Select VisitColumn_list([NotNull] SQLGrammarParser.Column_listContext context)
-        {
-            return base.VisitColumn_list(context);
         }
 
         public override Select VisitJoin([NotNull] SQLGrammarParser.JoinContext context)
-        {    
+        {
+            VisitChildren(context);
+
+            // When we reach a join clause in the tree store the table to join and the two columns in which to join on.
+            Join join = new Join();
+            join.JoinTable = context.table_name().table.GetText();
+            join.JoinColumns.Add(new Tuple<string, string>(context.column_name(0).table_name().table.GetText(), context.column_name(0).column.GetText()));
+            join.JoinColumns.Add(new Tuple<string, string>(context.column_name(1).table_name().table.GetText(), context.column_name(1).column.GetText()));
+            select.Joins.Add(join);
+
             return base.VisitJoin(context);
         }
+
     }
 }

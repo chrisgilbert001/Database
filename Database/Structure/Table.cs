@@ -20,6 +20,10 @@ namespace Database.Structure
             get { return _rows; }
         }
 
+        public Table()
+        {
+        }
+
         public Table(string name)
         {
             this.TableName = name;
@@ -32,6 +36,7 @@ namespace Database.Structure
 
         public Row AddAndCreateRow(List<string> entries)
         {
+            
             if (entries.Count == Columns.Count)
             {
                 Row row = new Row(entries);
@@ -47,7 +52,7 @@ namespace Database.Structure
 
         public void AddAndCreateColumn(string columnName)
         {           
-            Column newColumn = new Column(columnName, Columns.Count());
+            Column newColumn = new Column(columnName, Columns.Count(), TableName);
             this.Columns.Add(columnName, newColumn);
         }
 

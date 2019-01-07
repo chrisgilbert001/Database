@@ -22,7 +22,7 @@ column_element	: asterisk | column_name
 column_name	: (table_name '.')? column=id
 ;
 
-asterisk	: '*' | table_name '.' asterisk
+asterisk	: ALL | table_name '.'ALL
 ;
 
 table_name	: table=id
@@ -48,6 +48,7 @@ ON : O N;
 
 ID : (LETTER | DIGIT) (LETTER | DIGIT)*;
 EQ : '=';
+ALL : '*';
 
 LETTER : A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;
 

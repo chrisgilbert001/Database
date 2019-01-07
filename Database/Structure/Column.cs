@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace Database.Structure
 {
-    class Column
+    class Column :  ColumnBase
     {
-        public string Name { get; set; }
-        public int ColumnID { get; set; }
-
-        public Column(string name, int columnID)
+        public Column()
         {
-            Name = name;
-            ColumnID = columnID;
+        }
+
+        public Column(string name, int columnID, string tableName)
+        {
+            ColumnName = name;
+            ColumnIndex = columnID;
+            TableName = tableName;
         }
     }
 }

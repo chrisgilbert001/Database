@@ -9,7 +9,7 @@ namespace Database.Structure
     class Db
     {
         public string Name { get; set; }
-        public Dictionary<string, Table> TableDict = new Dictionary<string, Table>();
+        public Dictionary<string, Table> TableDictionary = new Dictionary<string, Table>();
 
         public Db()
         {
@@ -19,14 +19,14 @@ namespace Database.Structure
         public Table AddAndCreateTable(string tableName)
         {
             Table table = new Table(tableName);
-            TableDict.Add(tableName, table);
+            TableDictionary.Add(tableName, table);
             return table;
         }
 
         public Table GetTable(string tableName)
         {
             Table table;
-            if (TableDict.TryGetValue(tableName, out table))
+            if (TableDictionary.TryGetValue(tableName, out table))
             {
                 return table;
             }

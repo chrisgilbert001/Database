@@ -23,20 +23,40 @@ namespace Database
             {
                 // Create some tables and fill them with test data.
                 Db gilbertDb = new Db();
+
+                // Person Table
                 Table person = gilbertDb.AddAndCreateTable("Person"); 
                 person.AddAndCreateColumn("Name");
-                person.AddAndCreateColumn("Age");
-                for (int i = 0; i < 2; i++)
-                {
-                    person.AddAndCreateRow(new List<string>() { "Chris", "33" });
-                }
-                person.AddAndCreateRow(new List<string>() { "John", "44" });
+                person.AddAndCreateColumn("JobID");
+                person.AddAndCreateColumn("HouseID");
+                person.AddAndCreateRow(new List<string>() { "Chris", "1", "11" });
+                person.AddAndCreateRow(new List<string>() { "Jones", "2", "10" });
+                person.AddAndCreateRow(new List<string>() { "Lewys", "3", "10" });
+
+                // Job Table
+                Table job = gilbertDb.AddAndCreateTable("Job");
+                job.AddAndCreateColumn("JobName");
+                job.AddAndCreateColumn("JobID");
+                job.AddAndCreateRow(new List<string>() { "Retail Worker", "1" });
+                job.AddAndCreateRow(new List<string>() { "Engineer", "2" });
+                job.AddAndCreateRow(new List<string>() { "Student", "3" });
+
+                // House Table
+                Table house = gilbertDb.AddAndCreateTable("House");
+                house.AddAndCreateColumn("HouseID");
+                house.AddAndCreateColumn("Town");
+                house.AddAndCreateRow(new List<string>() { "10", "Cambridge" });
+                house.AddAndCreateRow(new List<string>() { "11", "Crawley" });
 
 
-                // Parse and execute a test query
-                string query = "SELECT Name FROM Person INNER JOIN Person ON Name = Name";
+                // 1Query to execute on the database.
+                string query = "SELECT Person.Name, Job.JobName, House.Town, House.HouseID " +
+                               "FROM Person " +
+                               "INNER JOIN House ON Person.HouseID = House.HouseID " +
+                               "INNER JOIN Job ON Person.JobID = Job.JobID";
                 
                 #region AntlrStuff
+                // Parse and visit the test query.
                 AntlrInputStream inputStream = new AntlrInputStream(query.ToString());
                 SQLGrammarLexer sqlLexer = new SQLGrammarLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(sqlLexer);
@@ -45,10 +65,7 @@ namespace Database
                 SQLVisitor visitor = new SQLVisitor();
                 #endregion
 
-                //Statement statement = visitor.Visit(context);
-                //statement.Execute(gilbertDb);
-
-                // Start benchmarking.
+                // Run the query 1000 times and benchmark the speed.
                 Action action = () => visitor.Visit(context).Execute(gilbertDb);
                 Benchmark(action, 1000);
                

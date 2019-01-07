@@ -13,16 +13,9 @@ namespace Database.SQLGrammar
     {
         public override Query VisitDmlstatements([NotNull] SQLGrammarParser.DmlstatementsContext context)
         {
-            // If it is a select statement then do it.
+            // So far we only support a select statement.
             var statement = context.select_statement();
-            if (statement != null)
-            {
-                return new SelectVisitor().VisitSelect_statement(statement);
-            }
-            else
-            {
-                return null;
-            }
+            return new SelectVisitor().VisitSelect_statement(statement);
         }
     }
 }

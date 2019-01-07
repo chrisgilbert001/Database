@@ -5,33 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Database.Structure
-{   /// <summary>
-    /// Row Class.
-    /// Contains one row worth of data belonging to a Table.
-    /// </summary>
-    class Row : List<string>
+{   
+    class Row : RowBase
     {
-        private List<string> _entries = new List<string>();
-
-        public List<string> Entries
-        {
-            get { return _entries; }
-        }
-
         public Row()
         {
-
-        }
-
-        public Row(List<string> entries)
-        {
-            this._entries = entries;
         }
 
         public Row(Table table, List<string> entries)
         {
-            this._entries = entries;
+            Entries = entries;
             table.AddRow(this);
+        }
+
+        public Row(List<string> entries)
+        {
+            Entries = entries;
         }
     }
 }

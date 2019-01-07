@@ -68,8 +68,11 @@
     <Compile Include="SQLStatements\DML\Query.cs" />
     <Compile Include="SQLStatements\Statement.cs" />
     <Compile Include="Structure\Column.cs" />
+    <Compile Include="Structure\ColumnBase.cs" />
     <Compile Include="Structure\Db.cs" />
+    <Compile Include="Structure\ResultRow.cs" />
     <Compile Include="Structure\Row.cs" />
+    <Compile Include="Structure\RowBase.cs" />
     <Compile Include="Structure\Table.cs" />
   </ItemGroup>
   <ItemGroup>
