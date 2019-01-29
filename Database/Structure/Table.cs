@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,16 +10,9 @@ namespace Database.Structure
     /// <summary>
     /// Table Class bla bla bla
     /// </summary>
-    class Table
+    class Table : TableBase
     {
-        private List<Row> _rows = new List<Row>();
         public string TableName { get; set; }
-        public Dictionary<string, Column> Columns = new Dictionary<string, Column>();
-
-        public List<Row> Rows
-        {
-            get { return _rows; }
-        }
 
         public Table()
         {
@@ -51,28 +45,30 @@ namespace Database.Structure
         }
 
         public void AddAndCreateColumn(string columnName)
-        {           
-            Column newColumn = new Column(columnName, Columns.Count(), TableName);
+        {
+            int index = Columns.Count;
+            Column newColumn = new Column(columnName, TableName, index);
             this.Columns.Add(columnName, newColumn);
+            this.ColumnList.Add(newColumn);
         }
 
+        /// <summary>
+        /// Searches the tables columns and retrieves it by name.
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
         public Column GetColumn(string columnName)
         {
             Column column;
-            if (Columns.TryGetValue(columnName, out column))
+            if (Columns.ContainsKey(columnName))
             {
-                return column;
+                return column = (Column)Columns[columnName];
             }
             else
             {
                 // TODO: Actually create an error class and error properly.
                 throw new NotImplementedException();
             }
-        }
-
-        public void CheckRowLength()
-        {
-
         }
     }
 }

@@ -23,6 +23,11 @@ namespace Database.Structure
             return table;
         }
 
+        /// <summary>
+        /// Searches the database tables to retrieve a table by table name.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public Table GetTable(string tableName)
         {
             Table table;

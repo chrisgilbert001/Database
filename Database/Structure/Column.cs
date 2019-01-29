@@ -12,11 +12,11 @@ namespace Database.Structure
         {
         }
 
-        public Column(string name, int columnID, string tableName)
+        public Column(string name, string tableName, int index)
         {
             ColumnName = name;
-            ColumnIndex = columnID;
             TableName = tableName;
+            ColumnIndex = index;
         }
     }
 }

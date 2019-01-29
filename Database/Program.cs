@@ -1,17 +1,12 @@
 ﻿using Database.Structure;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Database.Parsing;
 using Antlr4.Runtime;
 using Database.SQLGrammar;
-using Antlr.Runtime.Tree;
-using Database.SQLStatements.DML;
-using Database.SQLStatements;
 using System.Diagnostics;
+using Database.SQLStatements;
+using Database.QueryEngine;
 
 namespace Database
 {
@@ -53,8 +48,9 @@ namespace Database
                 string query = "SELECT Person.Name, Job.JobName, House.Town, House.HouseID " +
                                "FROM Person " +
                                "INNER JOIN House ON Person.HouseID = House.HouseID " +
-                               "INNER JOIN Job ON Person.JobID = Job.JobID";
-                
+                               "INNER JOIN Job ON Person.JobID = Job.JobID " +
+                               "INNER JOIN House ON Person.HouseID = House.HouseID";
+
                 #region AntlrStuff
                 // Parse and visit the test query.
                 AntlrInputStream inputStream = new AntlrInputStream(query.ToString());
@@ -65,10 +61,12 @@ namespace Database
                 SQLVisitor visitor = new SQLVisitor();
                 #endregion
 
+                Statement statement = visitor.Visit(context);
+                statement.Execute(gilbertDb);
+
                 // Run the query 1000 times and benchmark the speed.
-                Action action = () => visitor.Visit(context).Execute(gilbertDb);
-                Benchmark(action, 1000);
-               
+                // Action action = () => visitor.Visit(context);
+                // Benchmark(action, 1000);  
             }
             catch (Exception ex)
             {
@@ -80,9 +78,10 @@ namespace Database
         private static void Benchmark(Action act, int iterations)
         {
             GC.Collect();
-            act.Invoke(); // run once outside of loop to avoid initialization costs
+            // run once outside of loop to avoid initialization costs
+            act.Invoke(); 
             Stopwatch sw = Stopwatch.StartNew();
-            for (int i = 0; i < iterations; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 act.Invoke();
             }

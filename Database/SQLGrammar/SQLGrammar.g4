@@ -1,58 +1,29 @@
 grammar SQLGrammar;
 
-/*
-* Parser Rules
-*/
-
+// Parser Rules
 dmlstatements	: select_statement;
-
-select_statement	: SELECT column_list
-                      FROM table_name
-					  (join)*?
-;
-
+select_statement	: SELECT column_list FROM table_name (join)*?;   
 join : INNER JOIN table_name ON column_name EQ column_name;
+column_list	: column_element (',' column_element)*;
+column_element	: asterisk | column_name;
+column_name	: (table_name '.')? column=id;
+asterisk	: ALL | table_name '.'ALL;
+table_name	: table=id;
+compileUnit	: dmlstatements EOF;
+id	: ID;
 
-column_list	: column_element (',' column_element)*
-;
-
-column_element	: asterisk | column_name
-;
-
-column_name	: (table_name '.')? column=id
-;
-
-asterisk	: ALL | table_name '.'ALL
-;
-
-table_name	: table=id
-;
-
-compileUnit	: dmlstatements EOF
-;
-
-id	: ID
-;
-
-
-
-/*
-* Lexer Rules
-*/
-
+// Lexer Rules
 SELECT : S E L E C T;
 FROM : F R O M;
 JOIN: J O I N;
 INNER : I N N E R;
 ON : O N;
-
 ID : (LETTER | DIGIT) (LETTER | DIGIT)*;
 EQ : '=';
 ALL : '*';
-
 LETTER : A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;
 
-//Numbers
+// Numbers
 fragment DIGIT : [0-9];
 
 // Letters (CASE INSENSITIVE)
@@ -83,5 +54,5 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 
-WS :	' ' -> channel(HIDDEN)
+WS : ' ' -> channel(HIDDEN)
 ;
