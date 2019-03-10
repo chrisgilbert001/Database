@@ -33,29 +33,29 @@ namespace Database.QueryEngine
                 indexes = CalculateJoinColumnIndexes(select, join, tables);
 
                 // Perform the nested loop join
-                // results = NestedLoopJoin(tables, indexes);
+                 results = NestedLoopJoin(tables, indexes);
 
                 // Perform the hash join
-                results = HashJoin(tables, indexes);
+                //results = HashJoin(tables, indexes);
             }
 
-            columnIndexes = MapColumns(database, select, results);
+            //columnIndexes = MapColumns(database, select, results);
 
-            foreach (int i in columnIndexes)
-            {
-                Console.Write(results.ColumnList[i].ColumnName + " || ");
-            }
+            //foreach (int i in columnIndexes)
+            //{
+            //    Console.Write(results.ColumnList[i].ColumnName + " || ");
+            //}
 
-            Console.WriteLine();
-            // Print it out
-            foreach (Row row in results.Rows)
-            {
-                foreach (int i in columnIndexes)
-                {
-                    Console.Write(row.Entries[i] + "  ");
-                }
-                Console.WriteLine();
-            }
+            //Console.WriteLine();
+            //// Print it out
+            //foreach (Row row in results.Rows)
+            //{
+            //    foreach (int i in columnIndexes)
+            //    {
+            //        Console.Write(row.Entries[i] + "  ");
+            //    }
+            //    Console.WriteLine();
+            //}
         }
 
         /// <summary>/

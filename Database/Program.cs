@@ -26,7 +26,10 @@ namespace Database
                 person.AddAndCreateColumn("HouseID");
                 person.AddAndCreateRow(new List<string>() { "Chris", "1", "11" });
                 person.AddAndCreateRow(new List<string>() { "Jones", "2", "10" });
-                person.AddAndCreateRow(new List<string>() { "Lewys", "3", "10" });
+                for (int i = 0; i < 1000; i++)
+                {
+                    person.AddAndCreateRow(new List<string>() { "Lewys", i.ToString(),"10" });
+                }
 
                 // Job Table
                 Table job = gilbertDb.AddAndCreateTable("Job");
@@ -34,7 +37,10 @@ namespace Database
                 job.AddAndCreateColumn("JobID");
                 job.AddAndCreateRow(new List<string>() { "Retail Worker", "1" });
                 job.AddAndCreateRow(new List<string>() { "Engineer", "2" });
-                job.AddAndCreateRow(new List<string>() { "Student", "3" });
+                for (int i = 0; i < 1000; i++)
+                {
+                    job.AddAndCreateRow(new List<string>() { "Student", i.ToString() });
+                }
 
                 // House Table
                 Table house = gilbertDb.AddAndCreateTable("House");
@@ -45,7 +51,7 @@ namespace Database
 
 
                 // 1Query to execute on the database.
-                string query = "SELECT Person.Name, Job.JobName, House.Town, House.HouseID " +
+                string query = "SELECT Person.Name, Job.JobName, House.Town, Job.JobID " +
                                "FROM Person " +
                                "INNER JOIN House ON Person.HouseID = House.HouseID " +
                                "INNER JOIN Job ON Person.JobID = Job.JobID " +
@@ -61,12 +67,12 @@ namespace Database
                 SQLVisitor visitor = new SQLVisitor();
                 #endregion
 
-                Statement statement = visitor.Visit(context);
-                statement.Execute(gilbertDb);
+                //Statement statement = visitor.Visit(context);
+                //statement.Execute(gilbertDb);
 
                 // Run the query 1000 times and benchmark the speed.
-                // Action action = () => visitor.Visit(context);
-                // Benchmark(action, 1000);  
+                Action action = () => visitor.Visit(context).Execute(gilbertDb);
+                Benchmark(action, 10);  
             }
             catch (Exception ex)
             {
@@ -81,7 +87,7 @@ namespace Database
             // run once outside of loop to avoid initialization costs
             act.Invoke(); 
             Stopwatch sw = Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 act.Invoke();
             }
