@@ -15,8 +15,18 @@ namespace Database.SQLGrammar
     {
         public override Statement VisitCompileUnit([NotNull] SQLGrammarParser.CompileUnitContext context)
         {
-            //TODO: Also implement DDL here
-            return new QueryVisitor().VisitDmlstatements(context.dmlstatements());
+            if (context.dmlstatements() != null)
+            {
+                return new QueryVisitor().VisitDmlstatements(context.dmlstatements());
+            }
+            else if (context.ddlstatements() != null)
+            {
+                return new InsertVisitor().VisitDdlstatements(context.ddlstatements());
+            }
+            else
+            {
+                throw new Exception();
+            }
         }     
     }
 }

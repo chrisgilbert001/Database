@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace Database.Structure
     {
         public string TableName { get; set; }
 
+        [JsonConstructor]
         public Table()
         {
         }
@@ -62,7 +65,10 @@ namespace Database.Structure
             Column column;
             if (Columns.ContainsKey(columnName))
             {
-                return column = (Column)Columns[columnName];
+                JObject jobject = Columns[columnName] as JObject;
+                return column = jobject.ToObject<Column>();
+                //return column = (Column)Columns[columnName];
+
             }
             else
             {

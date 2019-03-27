@@ -1,6 +1,9 @@
-﻿using Database.SQLStatements;
+﻿using ConsoleTables;
+using Database.SQLStatements;
+using Database.SQLStatements.DDL;
 using Database.SQLStatements.DML;
 using Database.Structure;
+using Database.TablePrinter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,40 +25,50 @@ namespace Database.QueryEngine
             ResultTable results = new ResultTable();
             int[] columnIndexes = new int[select.QueryColumnList.Count];
 
-            foreach (Join join in select.Joins)
+            if (select.Joins.Count >= 1)
             {
-                // Get details about the join
-                join.GetStuff(database);
+                foreach (Join join in select.Joins)
+                {
+                    // Get details about the join
+                    join.GetStuff(database);
 
-                List<TableBase> tables = new List<TableBase>();
-                tables = CaculateJoin(join, select, results);
-                int[] indexes = new int[2];
-                indexes = CalculateJoinColumnIndexes(select, join, tables);
+                    List<TableBase> tables = new List<TableBase>();
+                    tables = CaculateJoin(join, select, results);
+                    int[] indexes = new int[2];
+                    indexes = CalculateJoinColumnIndexes(select, join, tables);
 
-                // Perform the nested loop join
-                 results = NestedLoopJoin(tables, indexes);
+                    // Perform the nested loop join
+                    // results = NestedLoopJoin(tables, indexes);
 
-                // Perform the hash join
-                //results = HashJoin(tables, indexes);
+                    // Perform the hash join
+                    results = HashJoin(tables, indexes);
+                }
+                columnIndexes = MapColumns(database, select, results);
             }
+            else
+                columnIndexes = MapColumns(database, select);
 
-            //columnIndexes = MapColumns(database, select, results);
+            Printer.PrintLine(columnIndexes);
+            Printer.PrintRow(columnIndexes, results.ColumnList);
+            Printer.PrintLine(columnIndexes);
 
-            //foreach (int i in columnIndexes)
-            //{
-            //    Console.Write(results.ColumnList[i].ColumnName + " || ");
-            //}
+            // Print it out
+            foreach (Row row in results.Rows)
+            {
+                Printer.PrintRow(columnIndexes, row);
+            }
+        }
 
-            //Console.WriteLine();
-            //// Print it out
-            //foreach (Row row in results.Rows)
-            //{
-            //    foreach (int i in columnIndexes)
-            //    {
-            //        Console.Write(row.Entries[i] + "  ");
-            //    }
-            //    Console.WriteLine();
-            //}
+        /// <summary>
+        /// Inserts rows into a table
+        /// </summary>
+        public static void ExecuteInsert(Db database, Insert insert)
+        {
+            Table table = database.GetTable(insert.TableName);
+
+            Row newRow = new Row();
+            newRow.Entries.AddRange(insert.values);
+            table.AddRow(newRow);
         }
 
         /// <summary>/
@@ -182,7 +195,7 @@ namespace Database.QueryEngine
             }
             else
             {
-                table1Index = tables[0].ColumnList.FindIndex(x => x == join.Table1Column);
+                table1Index = tables[0].ColumnList.FindIndex(x => x.ColumnName == join.Table1Column.ColumnName);
             }
             table2Index = join.Table2Column.ColumnIndex;
 
@@ -207,10 +220,25 @@ namespace Database.QueryEngine
             {
                 Table table = db.GetTable(stuff.Item1);
                 Column column = table.GetColumn(stuff.Item2);               
-                indexes[i] = results.ColumnList.FindIndex(x => x.Equals(column));
+                indexes[i] = results.ColumnList.FindIndex(x => x.ColumnName.Equals(column.ColumnName));
                 i++;
             }
             return indexes;
-        }    
+        }
+
+        public static int[] MapColumns(Db db, Select select)
+        {
+            int[] indexes = new int[select.QueryColumnList.Count];
+            int i = 0;
+
+            foreach (Tuple<string, string> stuff in select.QueryColumnList)
+            {
+                Table table = db.GetTable(stuff.Item1);
+                Column column = table.GetColumn(stuff.Item2);
+                indexes[i] = column.ColumnIndex;
+                i++;
+            }
+            return indexes;
+        }
     }
 }
