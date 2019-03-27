@@ -29,7 +29,7 @@ namespace Database.SQLGrammar
             // If its great grand parent is a select statement then add the columns we are getting from the FROM table.
             if (context.parent.parent.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
-                select.ColumnList.Add(new Tuple <string, string>(context.table_name().table.GetText(), context.column.GetText()));
+                select.QueryColumnList.Add(new Tuple <string, string>(context.table_name().table.GetText(), context.column.GetText()));
             }
             
             return select;
@@ -54,9 +54,9 @@ namespace Database.SQLGrammar
 
             // When we reach a join clause in the tree store the table to join and the two columns in which to join on.
             Join join = new Join();
-            join.JoinTable = context.table_name().table.GetText();
-            join.JoinColumns.Add(new Tuple<string, string>(context.column_name(0).table_name().table.GetText(), context.column_name(0).column.GetText()));
-            join.JoinColumns.Add(new Tuple<string, string>(context.column_name(1).table_name().table.GetText(), context.column_name(1).column.GetText()));
+            join.TableName = context.table_name().table.GetText();
+            join.ColumnList.Add(new Tuple<string, string>(context.column_name(0).table_name().table.GetText(), context.column_name(0).column.GetText()));
+            join.ColumnList.Add(new Tuple<string, string>(context.column_name(1).table_name().table.GetText(), context.column_name(1).column.GetText()));
             select.Joins.Add(join);
 
             return base.VisitJoin(context);

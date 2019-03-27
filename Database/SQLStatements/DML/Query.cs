@@ -14,8 +14,7 @@ namespace Database.SQLStatements
     abstract class Query : Statement
     {
         public Query()
-        {
-
-        }       
+        {  
+        }
     }
 }

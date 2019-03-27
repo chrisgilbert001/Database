@@ -1,17 +1,13 @@
 ﻿using Database.Structure;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Database.Parsing;
 using Antlr4.Runtime;
 using Database.SQLGrammar;
-using Antlr.Runtime.Tree;
-using Database.SQLStatements.DML;
-using Database.SQLStatements;
 using System.Diagnostics;
+using Database.SQLStatements;
+using Database.QueryEngine;
+using Database.Loading;
 
 namespace Database
 {
@@ -20,41 +16,107 @@ namespace Database
         static void Main(string[] args)
         {
             try
-            {
-                // Create some tables and fill them with test data.
-                Db gilbertDb = new Db();
+            {           
 
-                // Person Table
-                Table person = gilbertDb.AddAndCreateTable("Person"); 
+                Db database = Loader.Load(@"C:\Users\chris gilbert\Desktop\db2.json");
+
+                // Db database = Loader.Load(args[0]);
+                //Console.WriteLine("Database Successfully Loaded.");
+                //Console.WriteLine();
+                //Console.Write("Enter a Query");
+                //Console.WriteLine();
+
+                //string query = Console.ReadLine();
+                
+                #region testy stuff
+                
+                // Test B tree
+                BTree <int, Row> tree = new BTree<int, Row>(3);      
+                tree.Insert(6, new Row());
+                tree.Insert(4, new Row());
+                tree.Insert(2, new Row());
+                tree.Insert(3, new Row());
+                tree.Insert(7, new Row());
+                tree.Insert(5, new Row());
+                tree.Insert(10, new Row());
+                tree.Insert(8, new Row());
+                tree.Insert(11, new Row());
+                tree.Insert(13, new Row());
+                tree.Insert(9, new Row());
+                tree.Insert(14, new Row());
+                tree.Insert(15, new Row()); 
+                tree.Insert(16, new Row());
+                tree.Insert(17, new Row());
+                tree.Insert(1, new Row());
+
+
+                tree.DeleteFromTree(13, tree.RootNode);
+                tree.DeleteFromTree(15, tree.RootNode);
+                tree.DeleteFromTree(11, tree.RootNode);
+                tree.DeleteFromTree(14, tree.RootNode);
+                tree.DeleteFromTree(16, tree.RootNode);
+                tree.DeleteFromTree(17, tree.RootNode);
+
+                /*
+                // Create some tables and fill them with test data.
+                // Db database = new Db("database");
+
+                // Person Table#
+                Table person = database.AddAndCreateTable("Person"); 
                 person.AddAndCreateColumn("Name");
                 person.AddAndCreateColumn("JobID");
                 person.AddAndCreateColumn("HouseID");
-                person.AddAndCreateRow(new List<string>() { "Chris", "1", "11" });
+                Row row = person.AddAndCreateRow(new List<string>() { "Chris", "1", "11" });
                 person.AddAndCreateRow(new List<string>() { "Jones", "2", "10" });
-                person.AddAndCreateRow(new List<string>() { "Lewys", "3", "10" });
+                for (int i = 3; i < 1000; i++)
+                { 
+                
+                    person.AddAndCreateRow(new List<string>() { "Lewys", i.ToString(), "10" });
+                }
+
+                
+                tree.Insert("Chris", row);
+                tree.Insert("Simon", new Row());
+                tree.Insert("Lewys", new Row());
+                tree.Insert("Bob", new Row());
+                
 
                 // Job Table
-                Table job = gilbertDb.AddAndCreateTable("Job");
+                Table job = database.AddAndCreateTable("Job");
                 job.AddAndCreateColumn("JobName");
                 job.AddAndCreateColumn("JobID");
                 job.AddAndCreateRow(new List<string>() { "Retail Worker", "1" });
                 job.AddAndCreateRow(new List<string>() { "Engineer", "2" });
-                job.AddAndCreateRow(new List<string>() { "Student", "3" });
+                for (int i = 3; i < 1000; i++)
+                {
+                    job.AddAndCreateRow(new List<string>() { "Student", i.ToString() });
+                }
 
                 // House Table
-                Table house = gilbertDb.AddAndCreateTable("House");
+                Table house = database.AddAndCreateTable("House");
                 house.AddAndCreateColumn("HouseID");
                 house.AddAndCreateColumn("Town");
                 house.AddAndCreateRow(new List<string>() { "10", "Cambridge" });
                 house.AddAndCreateRow(new List<string>() { "11", "Crawley" });
 
+                // Saver.Save(database, @"C:\Users\chris gilbert\Desktop\db2.json" );
+                */
+                #endregion
 
-                // 1Query to execute on the database.
-                string query = "SELECT Person.Name, Job.JobName, House.Town, House.HouseID " +
+
+                // Query to execute on the database.
+                /*
+                string query = "SELECT Person.Name, Job.JobName, House.Town, Job.JobName " +
                                "FROM Person " +
                                "INNER JOIN House ON Person.HouseID = House.HouseID " +
-                               "INNER JOIN Job ON Person.JobID = Job.JobID";
-                
+                               "INNER JOIN Job ON Person.JobID = Job.JobID " +
+                               "INNER JOIN House ON Person.HouseID = House.HouseID";
+                */
+
+                // Query to execute on the database.
+                string query = "INSERT INTO Person " +
+                               "VALUES ('John', '1', '1')";
+
                 #region AntlrStuff
                 // Parse and visit the test query.
                 AntlrInputStream inputStream = new AntlrInputStream(query.ToString());
@@ -65,10 +127,16 @@ namespace Database
                 SQLVisitor visitor = new SQLVisitor();
                 #endregion
 
+                Statement statement = visitor.Visit(context);
+                statement.Execute(database);
+
+
+
                 // Run the query 1000 times and benchmark the speed.
-                Action action = () => visitor.Visit(context).Execute(gilbertDb);
-                Benchmark(action, 1000);
-               
+
+                Action action = () => visitor.Visit(context).Execute(database);
+
+                Benchmark(action, 10);  
             }
             catch (Exception ex)
             {
@@ -80,7 +148,8 @@ namespace Database
         private static void Benchmark(Action act, int iterations)
         {
             GC.Collect();
-            act.Invoke(); // run once outside of loop to avoid initialization costs
+            // run once outside of loop to avoid initialization costs
+            act.Invoke(); 
             Stopwatch sw = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
