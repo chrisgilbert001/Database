@@ -35,14 +35,5 @@ namespace Database.Structure
             Parent = parent;
             Children = new List<BTreeNode<TKey, TValue>>();
         }
-
-        public BTreeNode<TKey, TValue> GetParent() {
-            return this.Parent;
-        }
-
-        public List<BTreeNode<TKey, TValue>> GetChildren()
-        {
-            return this.Children;
-        }
     }
 }

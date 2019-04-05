@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Database.Structure
 {
-    class Db
+    class Db 
     {
         public string Name { get; set; }
         public Dictionary<string, Table> TableDictionary = new Dictionary<string, Table>();

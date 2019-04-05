@@ -21,6 +21,7 @@ namespace Database.SQLStatements.DML
         public Column[] QueryColumns;
         public List<Join> Joins = new List<Join> ();
         public bool processed = false;
+        public Where Where;
 
         public Select()
         {

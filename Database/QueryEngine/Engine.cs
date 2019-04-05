@@ -25,6 +25,25 @@ namespace Database.QueryEngine
             ResultTable results = new ResultTable();
             int[] columnIndexes = new int[select.QueryColumnList.Count];
 
+            if (select.Where != null)
+            {
+                // Execute the where clause
+                select.Where.SetColumn(database);
+                Table whereTable = select.Where.Table;
+
+                whereTable.Rows = select.Where.GetMatchingRows(database);
+
+                // Replace the table in the join with this new filtered version
+                int i = select.Joins.FindIndex(x => x.TableName.Equals(whereTable.TableName));
+
+                if (i < 0)
+                {
+                    // Do something
+                }
+                select.Joins[i].IsDirty = true;
+                select.Joins[i].Table2 = whereTable;
+            }
+
             if (select.Joins.Count >= 1)
             {
                 foreach (Join join in select.Joins)
@@ -46,8 +65,11 @@ namespace Database.QueryEngine
                 columnIndexes = MapColumns(database, select, results);
             }
             else
+            {
                 columnIndexes = MapColumns(database, select);
+            }
 
+            // Print columns and header lines.
             Printer.PrintLine(columnIndexes);
             Printer.PrintRow(columnIndexes, results.ColumnList);
             Printer.PrintLine(columnIndexes);
@@ -66,9 +88,38 @@ namespace Database.QueryEngine
         {
             Table table = database.GetTable(insert.TableName);
 
-            Row newRow = new Row();
-            newRow.Entries.AddRange(insert.values);
-            table.AddRow(newRow);
+            foreach (List<string> row in insert.Rows)
+            {
+                table.AddAndCreateRow(row);
+            }
+        }
+        
+        /// <summary>
+        /// Creates a new table
+        /// </summary>
+        public static void ExecuteCreateTable(Db database, CreateTable create)
+        {
+            Table table = database.AddAndCreateTable(create.TableName);
+            foreach (string column in create.ColumnNames)
+            {
+                table.AddAndCreateColumn(column);
+            }
+            // Set the unique column
+            if (create.UniqueColumn != null)
+            {
+                Column uniqueColumn = table.GetColumn(create.UniqueColumn);
+                table.UniqueIndex = new BTree<string, Row>(10);
+                table.UniqueColumnIndex = uniqueColumn.ColumnIndex;
+                uniqueColumn.IsUnique = true;
+            }
+        }
+
+        /// <summary>
+        /// Delete statement
+        /// </summary>
+        public static void ExecuteDelete(Db database, Delete delete)
+        {
+
         }
 
         /// <summary>/

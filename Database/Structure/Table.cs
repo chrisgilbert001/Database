@@ -33,11 +33,16 @@ namespace Database.Structure
 
         public Row AddAndCreateRow(List<string> entries)
         {
-            
             if (entries.Count == Columns.Count)
             {
                 Row row = new Row(entries);
                 Rows.Add(row);
+
+                // If the table has a unique key we need to add it to the tree
+                if (this.UniqueColumnIndex != null)
+                {
+                    UniqueIndex.Insert(entries[(int)UniqueColumnIndex], row);
+                }
                 return row;
             }
             else
@@ -65,10 +70,16 @@ namespace Database.Structure
             Column column;
             if (Columns.ContainsKey(columnName))
             {
-                JObject jobject = Columns[columnName] as JObject;
-                return column = jobject.ToObject<Column>();
-                //return column = (Column)Columns[columnName];
-
+                Columns.TryGetValue(columnName, out column);
+                /*JObject jobject = column as JObject;
+                if (jobject != null)
+                {
+                    return column = jobject.ToObject<Column>();
+                }
+                else
+                {*/
+                    return column = (Column)Columns[columnName];
+                
             }
             else
             {
