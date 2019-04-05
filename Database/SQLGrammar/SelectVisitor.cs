@@ -59,8 +59,14 @@ namespace Database.SQLGrammar
             join.ColumnList.Add(new Tuple<string, string>(context.column_name(1).table_name().table.GetText(), context.column_name(1).column.GetText()));
             select.Joins.Add(join);
 
-            return base.VisitJoin(context);
+            return select;
         }
 
+        public override Select VisitWhere([NotNull] SQLGrammarParser.WhereContext context)
+        {
+            VisitChildren(context);
+            select.Where = new WhereVisitor().VisitWhere(context);
+            return select;
+        }
     }
 }

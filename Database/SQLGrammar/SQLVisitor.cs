@@ -21,12 +21,28 @@ namespace Database.SQLGrammar
             }
             else if (context.ddlstatements() != null)
             {
-                return new InsertVisitor().VisitDdlstatements(context.ddlstatements());
+                return VisitDdlstatements(context.ddlstatements());
             }
             else
             {
                 throw new Exception();
             }
-        }     
+        }
+
+        public override Statement VisitDdlstatements([NotNull] SQLGrammarParser.DdlstatementsContext context)
+        {
+            if (context.insert_statement() != null)
+            {
+                return new InsertVisitor().VisitInsert_statement(context.insert_statement());
+            }
+            else if (context.create_table_statement() != null)
+            {
+                return new CreateTableVisitor().VisitCreate_table_statement(context.create_table_statement());
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
     }
 }

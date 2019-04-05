@@ -8,15 +8,16 @@ using Database.QueryEngine;
 
 namespace Database.SQLStatements.DDL
 {
-    class Insert : Statement
+    class CreateTable : Statement
     {
         public string TableName;
-        public List<List<string>> Rows = new List<List<string>>();
-        public List<string> Values = new List<string>();
+        public List<string> ColumnNames = new List<string>();
+        public string ConstraintName;
+        public string UniqueColumn;
 
         public override void Execute(Db database)
         {
-            Engine.ExecuteInsert(database, this);
+            Engine.ExecuteCreateTable(database, this);
         }
     }
 }

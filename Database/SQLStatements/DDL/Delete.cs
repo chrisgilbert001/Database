@@ -8,15 +8,13 @@ using Database.QueryEngine;
 
 namespace Database.SQLStatements.DDL
 {
-    class Insert : Statement
+    class Delete : Statement
     {
         public string TableName;
-        public List<List<string>> Rows = new List<List<string>>();
-        public List<string> Values = new List<string>();
 
         public override void Execute(Db database)
         {
-            Engine.ExecuteInsert(database, this);
+            Engine.ExecuteDelete(database, this);
         }
     }
 }

@@ -16,10 +16,10 @@ namespace Database
         static void Main(string[] args)
         {
             try
-            {           
-
+            {
                 Db database = Loader.Load(@"C:\Users\chris gilbert\Desktop\db2.json");
 
+                //Db database = new Db("GilbertDB");
                 // Db database = Loader.Load(args[0]);
                 //Console.WriteLine("Database Successfully Loaded.");
                 //Console.WriteLine();
@@ -27,9 +27,9 @@ namespace Database
                 //Console.WriteLine();
 
                 //string query = Console.ReadLine();
-                
+
                 #region testy stuff
-                
+                /*
                 // Test B tree
                 BTree <int, Row> tree = new BTree<int, Row>(3);      
                 tree.Insert(6, new Row());
@@ -56,7 +56,7 @@ namespace Database
                 tree.DeleteFromTree(14, tree.RootNode);
                 tree.DeleteFromTree(16, tree.RootNode);
                 tree.DeleteFromTree(17, tree.RootNode);
-
+                */
                 /*
                 // Create some tables and fill them with test data.
                 // Db database = new Db("database");
@@ -105,17 +105,23 @@ namespace Database
 
 
                 // Query to execute on the database.
-                /*
+                
                 string query = "SELECT Person.Name, Job.JobName, House.Town, Job.JobName " +
                                "FROM Person " +
                                "INNER JOIN House ON Person.HouseID = House.HouseID " +
                                "INNER JOIN Job ON Person.JobID = Job.JobID " +
-                               "INNER JOIN House ON Person.HouseID = House.HouseID";
-                */
+                               "INNER JOIN House ON Person.HouseID = House.HouseID " +
+                               "WHERE Job.JobID = '2'";
+                
 
+                /*
                 // Query to execute on the database.
                 string query = "INSERT INTO Person " +
-                               "VALUES ('John', '1', '1')";
+                               "VALUES ('John', '1', '1'), ('Chris', '2', '2')";
+
+                */
+
+                //string query = "CREATE TABLE Person (PersonID, Name, Age, Size, CONSTRAINT index UNIQUE (PersonID))";
 
                 #region AntlrStuff
                 // Parse and visit the test query.
@@ -130,10 +136,23 @@ namespace Database
                 Statement statement = visitor.Visit(context);
                 statement.Execute(database);
 
+                #region AntlrStuff2
+                string query1 = "INSERT INTO Person ('1', 'Chris', '16', 'big'), ('2', 'Bob', '16', 'big'), ('3', 'Charlie', '16', 'big')";
+                // Parse and visit the test query.
+                AntlrInputStream inputStream1 = new AntlrInputStream(query1.ToString());
+                SQLGrammarLexer sqlLexer1 = new SQLGrammarLexer(inputStream1);
+                CommonTokenStream commonTokenStream1 = new CommonTokenStream(sqlLexer1);
+                SQLGrammarParser sqlParser1 = new SQLGrammarParser(commonTokenStream1);
+                SQLGrammarParser.CompileUnitContext context1 = sqlParser1.compileUnit();
+                SQLVisitor visitor1 = new SQLVisitor();
+                #endregion
 
+
+
+                Statement statement1 = visitor.Visit(context1);
+                statement1.Execute(database);
 
                 // Run the query 1000 times and benchmark the speed.
-
                 Action action = () => visitor.Visit(context).Execute(database);
 
                 Benchmark(action, 10);  
