@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 namespace Database.Structure
 {
     class TableBase
-    {
-        
-        public List<Row> Rows = new List<Row>();
+    {   
         public Dictionary<string, Column> Columns = new Dictionary<string, Column>();
         public List<Column> ColumnList = new List<Column>();
+        public List<Row> Rows = new List<Row>();
+        public BTree<int, Row> UniqueIndex;
         public int? UniqueColumnIndex = null;
-        public BTree<string, Row> UniqueIndex;
     }
 }

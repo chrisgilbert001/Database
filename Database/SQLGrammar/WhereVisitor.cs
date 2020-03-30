@@ -7,6 +7,7 @@ using Antlr4.Runtime.Tree;
 using Database.SQLStatements.DML;
 using Database.SQLStatements;
 using Database.Parsing;
+using System;
 
 namespace Database.SQLGrammar
 {
@@ -30,6 +31,14 @@ namespace Database.SQLGrammar
             where.Column = new System.Tuple<string, string>(context.table_name().table.GetText(), context.column.GetText());
 
             return where;
-        }       
+        }
+
+        public override Where VisitAnd([NotNull] SQLGrammarParser.AndContext context)
+        {
+            VisitChildren(context);
+            where.Columns.Add(new Tuple<string, string>(context.column_name().column.GetText(), context.column_name().table_name().table.GetText()));
+
+            return where;
+        }
     }
 }

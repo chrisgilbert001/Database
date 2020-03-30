@@ -8,14 +8,15 @@ namespace Database.Loading
     {
         public static Db Load(string filePath)
         {
-            StreamReader file = File.OpenText(filePath);
-
-            using (JsonTextReader reader = new JsonTextReader(file))
+            using (StreamReader r = new StreamReader(filePath))
             {
-                Db database = JsonConvert.DeserializeObject<Db>(File.ReadAllText(filePath));
-
-                return database;
-            }
+                using (JsonReader reader = new JsonTextReader(r))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    Db database = serializer.Deserialize<Db>(reader);
+                    return database;
+                }
+            } 
         }
     }
 }

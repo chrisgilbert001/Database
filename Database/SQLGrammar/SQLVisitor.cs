@@ -17,7 +17,7 @@ namespace Database.SQLGrammar
         {
             if (context.dmlstatements() != null)
             {
-                return new QueryVisitor().VisitDmlstatements(context.dmlstatements());
+                return VisitDmlstatements(context.dmlstatements());
             }
             else if (context.ddlstatements() != null)
             {
@@ -25,10 +25,10 @@ namespace Database.SQLGrammar
             }
             else
             {
-                throw new Exception();
+                return null;
             }
         }
-
+        
         public override Statement VisitDdlstatements([NotNull] SQLGrammarParser.DdlstatementsContext context)
         {
             if (context.insert_statement() != null)
@@ -39,10 +39,27 @@ namespace Database.SQLGrammar
             {
                 return new CreateTableVisitor().VisitCreate_table_statement(context.create_table_statement());
             }
+            else if (context.delete_statement() != null)
+            {
+                return new DeleteVisitor().VisitDelete_statement(context.delete_statement());
+            }
             else
             {
-                throw new Exception();
+                return null;
             }
         }
+
+        public override Statement VisitDmlstatements([NotNull] SQLGrammarParser.DmlstatementsContext context)
+        {
+            if (context.select_statement() != null)
+            {
+                return new SelectVisitor().VisitSelect_statement(context.select_statement());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

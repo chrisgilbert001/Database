@@ -8,6 +8,6 @@ namespace Database.Structure
 {
     class ResultTable : TableBase
     {
-
+        public int[] ColumnIndexes;
     }
 }

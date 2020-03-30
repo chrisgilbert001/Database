@@ -13,9 +13,14 @@ namespace Database.Loading
     {
         public static void Save(Db database, string filePath)
         {
-            string output = JsonConvert.SerializeObject(database);
-            File.WriteAllText(filePath, String.Empty);
-            File.WriteAllText(filePath, output);
+            using (FileStream fs = File.Open(filePath, FileMode.Truncate))
+            using (StreamWriter sw = new StreamWriter(fs))
+            using (JsonWriter jw = new JsonTextWriter(sw))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                serializer.Serialize(jw, database);
+            }
         }
     }
 }

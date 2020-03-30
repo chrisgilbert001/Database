@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Database.SQLGrammar
 {
-    class QueryVisitor : SQLGrammarBaseVisitor<Query>
+    class QueryVisitor : SQLGrammarBaseVisitor<Statement>
     {
-        public override Query VisitDmlstatements([NotNull] SQLGrammarParser.DmlstatementsContext context)
+        public override Statement VisitDmlstatements([NotNull] SQLGrammarParser.DmlstatementsContext context)
         {
             // So far we only support a select statement.
             var statement = context.select_statement();

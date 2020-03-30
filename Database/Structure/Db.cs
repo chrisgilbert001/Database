@@ -14,6 +14,7 @@ namespace Database.Structure
         public string Name { get; set; }
         public Dictionary<string, Table> TableDictionary = new Dictionary<string, Table>();
 
+        #region Constructors
         /// <summary>
         /// Constructor to be used to load from file.
         /// </summary>
@@ -26,7 +27,13 @@ namespace Database.Structure
         {
             Name = name;
         }
+# endregion
 
+        /// <summary>
+        /// Creates and returns a new Table.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public Table AddAndCreateTable(string tableName)
         {
             Table table = new Table(tableName);
@@ -35,23 +42,19 @@ namespace Database.Structure
         }
 
         /// <summary>
-        /// Searches the database tables to retrieve a table by table name.
+        /// Searches the database to return a table by its name.
         /// </summary>
         /// <param name="tableName"></param>
         /// <returns></returns>
         public Table GetTable(string tableName)
         {
             Table table;
+            // Return the table object if it exists
             if (TableDictionary.TryGetValue(tableName, out table))
-            {
                 return table;
-            }
-            else
-            {
-                // TODO: Actually create an error class and error properly.
-                throw new NotImplementedException();
-            }
+            else 
+                // Error - the table does not exist
+                throw new Exception($"A table by the name '{tableName}' can not be found.");
         }
-
     }
 }

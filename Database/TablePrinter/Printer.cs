@@ -9,48 +9,105 @@ namespace Database.TablePrinter
 {
     class Printer
     {
-        public static void PrintLine(int[] columnIndexes)
+        /// <summary>
+        /// Prints the results of a query to a console
+        /// </summary>
+        /// <param name="results"></param>
+        public static void PrintTable(ResultTable results)
         {
-            Console.WriteLine(new string('-', columnIndexes.Length));
+            if (results.Rows.Count == 0)
+            {
+                // Print the header line
+                PrintLine(results.ColumnIndexes);
+
+                // Print columns
+                PrintCols(results);       
+                
+                // Print the header line
+                PrintLine(results.ColumnIndexes);
+
+                Console.WriteLine("0 rows returned.");
+            }
+            else
+            {
+                // Print the header line
+                PrintLine(results.ColumnIndexes);
+
+                // Print columns
+                PrintCols(results);
+
+                // Print the header line
+                PrintLine(results.ColumnIndexes);
+
+                // Print the rows
+                foreach (Row row in results.Rows)
+                {
+                    PrintRow(results, row);
+                }
+
+                PrintLine(results.ColumnIndexes);
+            }
         }
 
-        public static void PrintRow(int[] columnIndexes, List<Column> columns)
+        /// <summary>
+        /// Prints a dashed line to separate columns from rows.
+        /// </summary>
+        /// <param name="columnIndexes"></param>
+        private static void PrintLine(int[] columnIndexes)
         {
-            int width = 20;
+            Console.WriteLine(' ' + new string('-', (columnIndexes.Length * 25) - 1));
+        }
+
+        /// <summary>
+        /// Prints the columns
+        /// </summary>
+        /// <param name="results"></param>
+        private static void PrintCols(ResultTable results)
+        {
+            int width = 24;
             string row = "|";
 
-            foreach(int i in columnIndexes)
+            foreach(int i in results.ColumnIndexes)
             {
-                row += AlignCentre(columns[i].ColumnName, width) + "|";
+                row += AlignCentre(results.ColumnList[i].ColumnName, width) + "|";
             }
 
             Console.WriteLine(row);
         }
 
-        public static void PrintRow(int[] columnIndexes, Row rowrow)
+        /// <summary>
+        /// Prints the rows
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="row1"></param>
+        private static void PrintRow(ResultTable results, Row row1)
         {
-            int width = 20;
+            int width = 24;
             string row = "|";
 
-            foreach (int i in columnIndexes)
+            foreach (int i in results.ColumnIndexes)
             {
-                row += AlignCentre(rowrow.Entries[i], width) + "|";
+                row += AlignCentre(row1.Entries[i], width) + "|";
             }
 
             Console.WriteLine(row);
         }
 
-        public static string AlignCentre(string text, int width)
+        /// <summary>
+        /// Centers the string in a column
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        private static string AlignCentre(string text, int width)
         {
-            text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
-
             if (string.IsNullOrEmpty(text))
             {
                 return new string(' ', width);
             }
             else
             {
-                return text.PadRight(width - (width - text.Length) / 2).PadLeft(width);
+                return text.PadRight(width - (width - text.Length)/ 2).PadLeft(24);
             }
         }
     }

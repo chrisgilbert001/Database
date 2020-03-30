@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace Database.SQLStatements.DML
 {
-    class Where
+    class Where : Statement
     {
         public Tuple<string, string> Column;
         public Column Column_Column;
         public string EqualsString;
         public Table Table;
+        public List<Tuple<string, string>> Columns = new List<Tuple<string, string>>();
+        public List<string> EqualsStrings = new List<string>();
 
-#region Setters
+        #region Setters
 
         public void SetColumn(Db db)
         {
@@ -28,7 +30,7 @@ namespace Database.SQLStatements.DML
             Table = table;
         }
 
-# endregion
+        #endregion
 
         /// <summary>
         /// Find the rows that match the where clause.
@@ -41,7 +43,7 @@ namespace Database.SQLStatements.DML
             // Search the unique index if we can
             if (this.Column_Column.IsUnique)
             {
-                Row matchingRow = Table.UniqueIndex.Search(EqualsString, Table.UniqueIndex.RootNode).Pointer;
+                Row matchingRow = Table.UniqueIndex.Search(Convert.ToInt32(EqualsString), Table.UniqueIndex.RootNode).Pointer;
                 rows.Add(matchingRow);
                 return rows;
             }
@@ -57,6 +59,30 @@ namespace Database.SQLStatements.DML
                 }
                 return rows;
             }
+        }
+
+        /// <summary>
+        /// Find the rows that match the where clause.
+        /// </summary>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public List<Row> GetMatchingRows(Db db, ResultTable results)
+        {
+            List<Row> rows = new List<Row>();
+            int ind = results.ColumnList.IndexOf(Column_Column);
+            foreach (Row row in results.Rows)
+            {
+                if (row.Entries[ind].Equals(EqualsString))
+                {
+                    rows.Add(row);
+                }
+            }
+            return rows;
+        }
+
+        public override void Execute(Db database)
+        {
+            this.SetColumn(database);
         }
     }
 }

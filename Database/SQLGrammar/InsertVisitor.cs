@@ -41,8 +41,18 @@ namespace Database.SQLGrammar
         public override Insert VisitVal([NotNull] SQLGrammarParser.ValContext context)
         {
             VisitChildren(context);
-            insert.Values.Add(context.value.GetText());
+            string value = context.value.GetText();
+            validate(value);
+            insert.Values.Add(value);
             return insert;
+        }
+
+        private void validate(string value)
+        {
+            if (value.Length > 20)
+            {
+                throw new Exception($"Data overflow error - {value} - Strings can be maximum 20 characters");
+            }
         }
     }
 }

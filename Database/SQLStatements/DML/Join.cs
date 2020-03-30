@@ -11,7 +11,7 @@ namespace Database.SQLStatements.DML
      * Class representing a Join Clause.
      * Contains information about the join to do.    
      */
-    class Join
+    class Join: Statement
     {
         public string TableName { get; set; }
         public List<Tuple<string, string>> ColumnList = new List<Tuple<string, string>>();
@@ -20,6 +20,8 @@ namespace Database.SQLStatements.DML
         public Column Table1Column;
         public Column Table2Column;
         public bool IsDirty;
+        public int Selectivity;
+
 
         public void GetStuff(Db db)
         {
@@ -35,6 +37,11 @@ namespace Database.SQLStatements.DML
             }
 
             Table2Column = Table2.GetColumn(table2Join.Item2);
+        }
+
+        public override void Execute(Db database)
+        {
+            this.GetStuff(database);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Database.Structure
         public Row(List<string> entries)
         {
             Entries = entries;
+            Entries.TrimExcess();
         }
     }
 }

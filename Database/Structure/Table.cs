@@ -36,19 +36,25 @@ namespace Database.Structure
             if (entries.Count == Columns.Count)
             {
                 Row row = new Row(entries);
-                Rows.Add(row);
+                try
+                {
+                    Rows.Add(row);
+                }
+                catch
+                {
+
+                }
 
                 // If the table has a unique key we need to add it to the tree
                 if (this.UniqueColumnIndex != null)
                 {
-                    UniqueIndex.Insert(entries[(int)UniqueColumnIndex], row);
+                    UniqueIndex.Insert(Convert.ToInt32(entries[(int)UniqueColumnIndex]), row);
                 }
                 return row;
             }
             else
             {
-                //TODO: Error when the row size doesn't match the table size.
-                throw new NotImplementedException();
+                throw new Exception("Invalid number of entries");
             }
         }
 
@@ -71,20 +77,12 @@ namespace Database.Structure
             if (Columns.ContainsKey(columnName))
             {
                 Columns.TryGetValue(columnName, out column);
-                /*JObject jobject = column as JObject;
-                if (jobject != null)
-                {
-                    return column = jobject.ToObject<Column>();
-                }
-                else
-                {*/
-                    return column = (Column)Columns[columnName];
-                
+
+                return column = (Column)Columns[columnName];            
             }
             else
             {
-                // TODO: Actually create an error class and error properly.
-                throw new NotImplementedException();
+                throw new Exception($"Error: Column {columnName} does not exist in Table {TableName}");
             }
         }
     }

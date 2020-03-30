@@ -12,7 +12,7 @@ namespace Database.SQLStatements.DML
     /*
      * Class for a simple select statement.
      */
-    class Select : Query
+    class Select : Statement
     {
         public string FromTableName { get; set; }
         public Table FromTable;
@@ -28,9 +28,16 @@ namespace Database.SQLStatements.DML
 
         }
 
-        public override void Execute(Db database)
-        {
-            Engine.ExecuteSelect(database, this);
+        public override void Execute(Db db)
+       {
+            if (this.Joins.Count > 0)
+            {
+                Engine.ExecuteSelectWithJoins(db, this);
+            }
+            else
+            {
+                Engine.ExecuteSelectWithoutJoins(db, this);
+            }
         }
     };
 }

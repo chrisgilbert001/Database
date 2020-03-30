@@ -1,17 +1,16 @@
 grammar SQLGrammar;
 
 // Parser Rules
-ddlstatements : insert_statement | create_table_statement;
+ddlstatements : insert_statement | create_table_statement | delete_statement;
 dmlstatements : select_statement;
-
-//Parser rules for create statement
 create_table_statement : CREATE TABLE tablename=id '(' column_name (',' column_name)*?  (',' unique_constraint)? ')';
 unique_constraint : CONSTRAINT constraint_name=id UNIQUE '(' unique_column=id ')';
 column_name	: (table_name '.')? column=id;
-delete_statement : DELETE FROM table_name;
+delete_statement : DELETE FROM table_name (where)?;
 insert_statement : INSERT INTO  table_name VALUES values (',' values)*?;
 select_statement : SELECT column_list FROM table_name (join)*? (where)?;   
-where : WHERE column_name '=' '\'' equals_string=id '\'';
+where : WHERE column_name '=' '\'' equals_string=id '\'' (and)*?;
+and : AND column_name '=' '\'' equals_string=id '\'';
 values :  '(' val(',' val)*? ')';
 val : QUOTE value=id QUOTE;
 join : INNER JOIN table_name ON column_name EQ column_name;
@@ -29,6 +28,7 @@ TABLE  : T A B L E;
 DELETE : D E L E T E;
 INTO : I N T O; 
 WHERE : W H E R E;
+AND : A N D;
 VALUES: V A L U E S;
 SELECT : S E L E C T;
 FROM : F R O M;
@@ -37,7 +37,9 @@ INNER : I N N E R;
 CONSTRAINT: C O N S T R A I N T;
 UNIQUE : U N I Q U E;
 ON : O N;
-ID : (LETTER | DIGIT) (LETTER | DIGIT)*;
+ID : (LETTER | DIGIT) (LETTER | DIGIT)*
+;
+
 EQ : '=';
 ALL : '*';
 LETTER : A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;

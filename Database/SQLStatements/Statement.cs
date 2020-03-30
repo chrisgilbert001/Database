@@ -10,7 +10,6 @@ namespace Database.SQLStatements
     /* 
      * Class to represent all statements that can be performed in the database.
      */
-
     abstract class Statement
     {
         public abstract void Execute(Db database);

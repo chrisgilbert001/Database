@@ -8,6 +8,7 @@ namespace Database.Structure
 {
     /// <summary>
     /// Implementation of a B Tree
+    /// Code inspiration from sources for B-Tree:
     /// https://github.com/justcoding121/Advanced-Algorithms/blob/master/src/Advanced.Algorithms/DataStructures/Tree/BTree.cs
     /// https://github.com/rsdcastro/btree-dotnet/blob/master/BTree/Entry.cs
     /// </summary>
@@ -16,6 +17,7 @@ namespace Database.Structure
         public BTreeNode<TKey, TValue> RootNode { get; set; }
         public int MaxKeys { get; set; }
         public int MinKeys { get; set; }
+        public string name;
 
         /// <summary>
         /// Constructor
@@ -50,44 +52,32 @@ namespace Database.Structure
                 InsertIntoNode(value, pointer, insertNode);
             }
         }
-
-        /// <summary>
-        /// Method to search for a key in a btree
-        /// </summary>
-        /// <param name="search"></param>
-        /// <param name="node"></param>
-        /// <returns></returns>
+        
         public BTreeKey<TKey, TValue> Search(TKey search, BTreeNode<TKey, TValue> node)
         {
-            for (int i = 0; i < node.KeyCount; i++)
+            int i = 0;
+            int n = node.KeyCount;
+
+            // Find where the entry would be placed in an ordered list.
+            while (i < n && node.Keys[i].Key.CompareTo(search) < 0)
             {
-                if (node.IsLeaf == true)
+                i++;
+            }
+
+            if (i < n)
+            {
+                if (node.Keys[i].Equals(search))
                 {
-                    // if we find the key return it
-                    if (node.Keys[i].Equals(search))
-                    {
-                        return node.Keys[i];
-                    }
-                }
-                else
-                {   // if we find the key return it
-                    if (node.Keys[i].Equals(search))
-                    {
-                        return node.Keys[i];
-                    }
-                    // If it is less than the key we need to check it's child
-                    else if (node.Keys[i].Key.CompareTo(search) < 0)
-                    {
-                        return Search(search, node.Children[i]);
-                    }
-                    // Check the last child 
-                    else
-                    {
-                        return Search(search, node.Children[i + 1]);
-                    }
+                    return node.Keys[i];
                 }
             }
-            throw new Exception();
+
+            if (node.IsLeaf == true)
+            {
+                throw new Exception();
+            }
+
+            return Search(search, node.Children[i]);
         }
 
         /// <summary>
@@ -105,7 +95,8 @@ namespace Database.Structure
                     // if we find the key then we cant add it again
                     if (node.Keys[i].Equals(search))
                     {
-                        throw new Exception();
+                        // throw new Exception();
+                        return null;
                     }
                 }
                 // If we are in a leaf node and we don't find it then this is where to add it
@@ -113,23 +104,34 @@ namespace Database.Structure
             }
             else
             {
-                for (int i = 0; i < node.KeyCount; i++)
+
+                int i = 0;
+                int n = node.KeyCount;
+
+                while (i < n && node.Keys[i].Key.CompareTo(search) < 0)
                 {
-                    // if we find the key error
+                    i++;
+                }
+
+                if (i < n)
+                {
                     if (node.Keys[i].Equals(search))
                     {
                         throw new Exception();
                     }
-                    // If it is less than the key we need to check it's child
-                    else if (node.Keys[i].Key.CompareTo(search) > 0)
+                    else
                     {
                         return FindWhereToInsert(search, node.Children[i]);
                     }
                 }
-                // Check the last child 
-                return FindWhereToInsert(search, node.Children.Last());
+                else
+                {
+                    return FindWhereToInsert(search, node.Children[i]);
+                }
             }
         }
+        
+
 
         /// <summary>
         /// Insert a value into the node
@@ -139,22 +141,19 @@ namespace Database.Structure
         /// <param name="node"></param>
         public void InsertIntoNode(TKey value, TValue pointer, BTreeNode<TKey, TValue> node)
         {
-            if (node.Keys.Last().Key.CompareTo(value) < 0)
+            if (node == null)
+            { return; }
+
+            int i = 0;
+            int n = node.KeyCount;
+
+            while (i < n && node.Keys[i].Key.CompareTo(value) < 0)
             {
-                node.Keys.Insert(node.KeyCount, new BTreeKey<TKey, TValue>() { Key = value, Pointer = pointer });
+                i++;
             }
-            else
-            {
-                // Find where to insert the new key
-                for (int i = 0; i < node.KeyCount; i++)
-                {
-                    if (node.Keys[i].Key.CompareTo(value) > 0)
-                    {
-                        node.Keys.Insert(i, new BTreeKey<TKey, TValue>() { Key = value, Pointer = pointer });
-                        break;
-                    }
-                }
-            }
+
+            node.Keys.Insert(i, new BTreeKey<TKey, TValue>() { Key = value, Pointer = pointer });
+           
 
             // If the node is full
             if (node.KeyCount > MaxKeys)
@@ -498,11 +497,7 @@ namespace Database.Structure
         /// <returns></returns>
         public int GetSepIndex(int nodeIndex, BTreeNode<TKey, TValue> node)
         {
-            if (nodeIndex == 0)
-            {
-                return 0;
-            }
-            else if (nodeIndex == node.Parent.KeyCount)
+             if (nodeIndex == node.Parent.KeyCount)
             {
                 return nodeIndex - 1;
             }

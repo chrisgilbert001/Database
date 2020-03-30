@@ -25,7 +25,6 @@ namespace Database.SQLGrammar
         public override Select VisitColumn_name([NotNull] SQLGrammarParser.Column_nameContext context)
         {
             VisitChildren(context);
-            // TODO: Maybe improve here.
             // If its great grand parent is a select statement then add the columns we are getting from the FROM table.
             if (context.parent.parent.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
@@ -38,11 +37,15 @@ namespace Database.SQLGrammar
         public override Select VisitTable_name([NotNull] SQLGrammarParser.Table_nameContext context)
         {
             VisitChildren(context);
-            // TODO: Maybe improve here.
             // If its parent is a select statement then this is the FROM table.
             if (context.parent.GetType() == typeof(SQLGrammarParser.Select_statementContext))
             {
-                select.FromTableName = context.table.GetText();
+                if (context.table.GetText() == null)
+                {
+                    throw new Exception("FROM Table has not been defined.");
+                }
+                    select.FromTableName = context.table.GetText();
+                
             }
 
             return select;

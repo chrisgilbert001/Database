@@ -42,9 +42,6 @@
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.5\lib\net45\Antlr4.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="ConsoleTables, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ConsoleTables.2.3.0\lib\net40\ConsoleTables.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -82,7 +79,6 @@
     <Compile Include="SQLStatements\DDL\Insert.cs" />
     <Compile Include="SQLStatements\DML\Join.cs" />
     <Compile Include="SQLStatements\DML\Select.cs" />
-    <Compile Include="SQLStatements\DML\Query.cs" />
     <Compile Include="SQLStatements\DML\Where.cs" />
     <Compile Include="SQLStatements\Statement.cs" />
     <Compile Include="Structure\BTree.cs" />
@@ -90,6 +86,7 @@
     <Compile Include="Structure\BTreeNode.cs" />
     <Compile Include="Structure\Column.cs" />
     <Compile Include="Structure\ColumnBase.cs" />
+    <Compile Include="Structure\CustomString.cs" />
     <Compile Include="Structure\Db.cs" />
     <Compile Include="Structure\ResultRow.cs" />
     <Compile Include="Structure\ResultTable.cs" />
@@ -98,6 +95,9 @@
     <Compile Include="Structure\Table.cs" />
     <Compile Include="Structure\TableBase.cs" />
     <Compile Include="TablePrinter\Printer.cs" />
+    <Compile Include="Test7.cs" />
+    <Compile Include="Test8.cs" />
+    <Compile Include="Test9.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
